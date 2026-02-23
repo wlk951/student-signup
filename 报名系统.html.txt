@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>学生报名系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f7fa; padding: 15px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        h1 { color: #1e5799; text-align: center; margin-bottom: 20px; font-size: 28px; }
+        .qr-section { text-align: center; background: #f8f9fa; padding: 25px; border-radius: 15px; margin-bottom: 20px; }
+        #qrcode { margin: 20px auto; display: inline-block; padding: 15px; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .stats { background: #e8f4ff; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; font-size: 18px; }
+        .form-section { background: #f9f9f9; padding: 20px; border-radius: 10px; }
+        h2 { color: #2980b9; margin-bottom: 15px; font-size: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; }
+        .required:after { content: " *"; color: #e74c3c; }
+        input, select { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; }
+        input:focus, select:focus { border-color: #1e5799; outline: none; }
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 15px; margin: 15px 0; }
+        .checkbox-item { display: flex; align-items: center; }
+        .checkbox-item input { width: 20px; height: 20px; margin-right: 8px; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; margin: 10px 0; }
+        .btn-primary { background: #1e5799; color: white; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-warning { background: #f39c12; color: white; }
+        .message { padding: 12px; border-radius: 8px; margin: 10px 0; display: none; }
+        .message.success { background: #d4edda; color: #155724; }
+        .message.error { background: #f8d7da; color: #721c24; }
+        .admin-panel { margin-top: 30px; padding: 20px; background: #f0f0f0; border-radius: 10px; display: none; }
+        .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
+        .print-btn { background: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 10px 5px; }
+        .qr-actions { margin: 15px 0; }
+        .info-box { background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 8px; margin: 15px 0; }
+    </style>
+    <!-- 引入二维码生成库 -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 学生报名信息采集系统</h1>
+        
+        <!-- 统计信息 -->
+        <div class="stats">
+            📊 已报名：<span id="totalCount">0</span> 人 | 
+            今日报名：<span id="todayCount">0</span> 人
+        </div>
+        
+        <!-- 提示信息 -->
+        <div id="message" class="message"></div>
+        
+        <!-- 二维码区域 - 学生用手机扫码 -->
+        <div class="qr-section">
+            <h2 style="color: #1e5799;">📱 手机扫码报名</h2>
+            <p style="margin-bottom: 15px;">用手机微信/浏览器扫描下方二维码直接填写</p>
+            
+            <div id="qrcode"></div>
+            
+            <div class="qr-actions">
+                <button onclick="downloadQR()" class="print-btn">📥 下载二维码</button>
+                <button onclick="printQR()" class="print-btn">🖨️ 打印二维码</button>
+            </div>
+            
+            <div class="info-box">
+                <strong>📌 使用说明：</strong>
+                <ol style="text-align: left; margin-top: 10px; padding-left: 20px;">
+                    <li><strong>步骤1：</strong>把二维码打印出来，贴在学校公告栏或教室</li>
+                    <li><strong>步骤2：</strong>学生用手机扫描二维码，直接填写报名信息</li>
+                    <li><strong>步骤3：</strong>管理员随时可以导出所有报名数据</li>
+                    <li><strong>注意：</strong>每个学生只能提交一次，系统会自动检查身份证重复</li>
+                </ol>
+            </div>
+            
+            <p style="margin-top: 15px; color: #666;">
+                <small>访问地址：<span id="currentUrl"></span></small>
+            </p>
+        </div>
+        
+        <!-- 管理员登录按钮 -->
+        <button onclick="toggleAdmin()" class="btn btn-warning">👤 管理员入口</button>
+        
+        <!-- 管理员面板 -->
+        <div id="adminPanel" class="admin-panel">
+            <h3 style="margin-bottom: 15px;">管理员登录</h3>
+            <div class="form-group">
+                <input type="password" id="adminPass" placeholder="请输入管理员密码">
+            </div>
+            <button onclick="loginAdmin()" class="btn btn-success" style="padding: 10px;">登录</button>
+            
+            <div id="adminFunctions" style="display: none; margin-top: 20px;">
+                <h4>数据管理</h4>
+                <button onclick="exportData('excel')" class="btn btn-primary" style="margin: 5px 0;">📊 导出Excel文件</button>
+                <button onclick="exportData('json')" class="btn btn-success" style="margin: 5px 0;">📄 导出JSON文件</button>
+                <button onclick="viewData()" class="btn btn-warning" style="margin: 5px 0;">👁️ 查看所有数据</button>
+                <button onclick="clearAllData()" class="btn" style="background: #e74c3c; color: white; margin: 5px 0;">🗑️ 清空所有数据</button>
+                
+                <div id="dataView" style="margin-top: 20px; max-height: 300px; overflow: auto;"></div>
+            </div>
+        </div>
+        
+        <!-- 学生报名表单（也可以直接在这里填） -->
+        <div class="form-section">
+            <h2>📋 在线填写报名表</h2>
+            
+            <form id="studentForm">
+                <h3>基本信息</h3>
+                
+                <div class="form-group">
+                    <label class="required">姓名</label>
+                    <input type="text" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="required">性别</label>
+                    <select name="gender" required>
+                        <option value="">请选择</option>
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="required">民族</label>
+                    <input type="text" name="ethnicity" required placeholder="如：汉族">
+                </div>
+                
+                <div class="form-group">
+                    <label class="required">身份证号码</label>
+                    <input type="text" name="idCard" maxlength="18" required placeholder="18位身份证" id="idCard">
+                    <small style="color: #666;">提交前会自动检查是否重复</small>
+                </div>
+                
+                <div class="form-group">
+                    <label>学籍号（选填）</label>
+                    <input type="text" name="studentNumber">
+                </div>
+                
+                <div class="form-group">
+                    <label>原就读学校（选填）</label>
+                    <input type="text" name="previousSchool">
+                </div>
+                
+                <h3>家庭情况</h3>
+                
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" name="isPoorHousehold" id="poor">
+                        <label for="poor">建档立卡户</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" name="isLeftBehindChild" id="left">
+                        <label for="left">留守儿童</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" name="isBoarder" id="boarder">
+                        <label for="boarder">住校</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" name="isSingleParent" id="single">
+                        <label for="single">单亲家庭</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" name="isDisabledChild" id="disabled">
+                        <label for="disabled">残疾儿童</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="required">户籍地（精确到村）</label>
+                    <input type="text" name="registeredAddress" required placeholder="例如：XX省XX市XX县XX镇XX村">
+                </div>
+                
+                <div class="form-group">
+                    <label class="required">现居住地（精确到组）</label>
+                    <input type="text" name="currentAddress" required placeholder="例如：XX省XX市XX县XX镇XX村XX组">
+                </div>
+                
+                <h3>监护人信息</h3>
+                
+                <div class="form-group">
+                    <label class="required">监护人姓名</label>
+                    <input type="text" name="guardianName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="required">与监护人关系</label>
+                    <select name="guardianRelation" required>
+                        <option value="">请选择</option>
+                        <option value="父亲">父亲</option>
+                        <option value="母亲">母亲</option>
+                        <option value="祖父">祖父</option>
+                        <option value="祖母">祖母</option>
+                        <option value="外祖父">外祖父</option>
+                        <option value="外祖母">外祖母</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="required">监护人身份证</label>
+                    <input type="text" name="guardianIdCard" maxlength="18" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="required">监护人电话</label>
+                    <input type="tel" name="guardianPhone" maxlength="11" required placeholder="11位手机号">
+                </div>
+                
+                <div class="form-group">
+                    <label>包保教师（选填）</label>
+                    <input type="text" name="responsibleTeacher">
+                </div>
+                
+                <button type="submit" class="btn btn-primary">✅ 提交报名信息</button>
+            </form>
+        </div>
+        
+        <div class="footer">
+            <p>© 学生报名系统 | 数据保存在浏览器中 | 管理员密码：admin123</p>
+        </div>
+    </div>
+    
+    <script>
+        // ========== 数据初始化 ==========
+        let students = JSON.parse(localStorage.getItem('students')) || [];
+        let adminLoggedIn = false;
+        
+        // 页面加载时运行
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            generateQRCode();
+            document.getElementById('currentUrl').textContent = window.location.href;
+            
+            // 显示欢迎信息
+            if (students.length === 0) {
+                showMessage('欢迎使用！请打印二维码让学生扫码报名。', 'success');
+            }
+        });
+        
+        // ========== 更新统计 ==========
+        function updateStats() {
+            const total = students.length;
+            const today = new Date().toDateString();
+            const todayCount = students.filter(s => new Date(s.submissionTime).toDateString() === today).length;
+            
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('todayCount').textContent = todayCount;
+        }
+        
+        // ========== 显示消息 ==========
+        function showMessage(text, type) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = `message ${type}`;
+            msg.style.display = 'block';
+            setTimeout(() => msg.style.display = 'none', 5000);
+        }
+        
+        // ========== 二维码功能 ==========
+        function generateQRCode() {
+            const url = window.location.href;
+            const qrcodeDiv = document.getElementById('qrcode');
+            qrcodeDiv.innerHTML = '';
+            
+            QRCode.toCanvas(qrcodeDiv, url, { width: 250 }, function(error) {
+                if (error) console.error('二维码生成失败:', error);
+            });
+        }
+        
+        function downloadQR() {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (!canvas) return alert('请稍等，二维码正在生成...');
+            
+            const link = document.createElement('a');
+            link.download = '学生报名二维码.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showMessage('二维码已下载！', 'success');
+        }
+        
+        function printQR() {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (!canvas) return alert('请稍等，二维码正在生成...');
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>学生报名系统二维码</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; text-align: center; padding: 30px; }
+                        h2 { color: #1e5799; }
+                        .qr { margin: 30px auto; }
+                        .info { margin: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px; text-align: left; }
+                    </style>
+                </head>
+                <body>
+                    <h2>学生报名信息采集系统</h2>
+                    <p>请使用手机扫描下方二维码填写报名信息</p>
+                    <div class="qr">${document.getElementById('qrcode').innerHTML}</div>
+                    <div class="info">
+                        <h3>使用说明：</h3>
+                        <ol>
+                            <li>打开手机微信/浏览器</li>
+                            <li>扫描上方二维码</li>
+                            <li>填写报名信息并提交</li>
+                            <li>每个学生只能提交一次</li>
+                        </ol>
+                        <p><strong>访问地址：</strong> ${window.location.href}</p>
+                        <p><strong>生成时间：</strong> ${new Date().toLocaleString()}</p>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.print();
+        }
+        
+        // ========== 身份证验证 ==========
+        function validateIdCard(idCard) {
+            if (!/^\d{17}[\dXx]$/.test(idCard)) return false;
+            if (idCard.length === 18) {
+                const weight = [7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2];
+                const check = ['1','0','X','9','8','7','6','5','4','3','2'];
+                let sum = 0;
+                for (let i = 0; i < 17; i++) sum += parseInt(idCard[i]) * weight[i];
+                return idCard[17].toUpperCase() === check[sum % 11];
+            }
+            return true;
+        }
+        
+        function validatePhone(phone) {
+            return /^1[3-9]\d{9}$/.test(phone);
+        }
+        
+        // ========== 表单提交 ==========
+        document.getElementById('studentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {};
+            const checkboxes = ['isPoorHousehold','isLeftBehindChild','isBoarder','isSingleParent','isDisabledChild'];
+            
+            for (let [key, value] of formData.entries()) {
+                if (checkboxes.includes(key)) {
+                    data[key] = value === 'on' ? '是' : '否';
+                } else {
+                    data[key] = value;
+                }
+            }
+            
+            // 验证
+            if (!validateIdCard(data.idCard)) return showMessage('学生身份证格式不正确！', 'error');
+            if (!validateIdCard(data.guardianIdCard)) return showMessage('监护人身份证格式不正确！', 'error');
+            if (!validatePhone(data.guardianPhone)) return showMessage('手机号码格式不正确！', 'error');
+            
+            // 检查重复
+            if (students.find(s => s.idCard === data.idCard)) {
+                return showMessage('该身份证号码已提交过！', 'error');
+            }
+            
+            // 保存
+            data.submissionTime = new Date().toISOString();
+            data.id = Date.now();
+            students.push(data);
+            localStorage.setItem('students', JSON.stringify(students));
+            
+            showMessage('✅ 报名成功！', 'success');
+            updateStats();
+            this.reset();
+        });
+        
+        // ========== 管理员功能 ==========
+        function toggleAdmin() {
+            const panel = document.getElementById('adminPanel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        function loginAdmin() {
+            const pass = document.getElementById('adminPass').value;
+            if (pass === 'admin123') {
+                adminLoggedIn = true;
+                document.getElementById('adminFunctions').style.display = 'block';
+                showMessage('管理员登录成功！', 'success');
+            } else {
+                showMessage('密码错误！', 'error');
+            }
+        }
+        
+        function exportData(format) {
+            if (!adminLoggedIn) return showMessage('请先登录管理员', 'error');
+            if (students.length === 0) return showMessage('暂无数据可导出', 'error');
+            
+            let content, filename;
+            const date = new Date().toLocaleDateString().replace(/\//g, '-');
+            
+            if (format === 'json') {
+                content = JSON.stringify(students, null, 2);
+                filename = `学生报名数据_${date}.json`;
+            } else {
+                const headers = ['姓名','性别','民族','身份证','学籍号','原学校','建档立卡','留守','住校','单亲','残疾','户籍地','现住地','监护人','关系','监护人身份证','电话','包保教师','提交时间'];
+                const rows = [headers];
+                
+                students.forEach(s => {
+                    rows.push([
+                        s.name, s.gender, s.ethnicity, s.idCard, s.studentNumber || '', s.previousSchool || '',
+                        s.isPoorHousehold || '否', s.isLeftBehindChild || '否', s.isBoarder || '否',
+                        s.isSingleParent || '否', s.isDisabledChild || '否',
+                        s.registeredAddress, s.currentAddress, s.guardianName, s.guardianRelation,
+                        s.guardianIdCard, s.guardianPhone, s.responsibleTeacher || '',
+                        new Date(s.submissionTime).toLocaleString()
+                    ]);
+                });
+                
+                content = rows.map(row => row.join(',')).join('\n');
+                filename = `学生报名数据_${date}.csv`;
+            }
+            
+            const blob = new Blob(['\ufeff' + content], { type: 'text/plain;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showMessage(`✅ 已导出 ${students.length} 条数据`, 'success');
+        }
+        
+        function viewData() {
+            if (!adminLoggedIn) return showMessage('请先登录管理员', 'error');
+            
+            const view = document.getElementById('dataView');
+            if (students.length === 0) {
+                view.innerHTML = '<p style="color:#666; padding:10px;">暂无报名数据</p>';
+                return;
+            }
+            
+            let html = '<table style="width:100%; border-collapse:collapse;">';
+            html += '<tr style="background:#1e5799; color:white;"><th>姓名</th><th>身份证</th><th>电话</th><th>提交时间</th></tr>';
+            
+            students.slice().reverse().forEach(s => {
+                html += `<tr style="border-bottom:1px solid #ddd;">
+                    <td style="padding:8px;">${s.name}</td>
+                    <td style="padding:8px;">${s.idCard}</td>
+                    <td style="padding:8px;">${s.guardianPhone}</td>
+                    <td style="padding:8px;">${new Date(s.submissionTime).toLocaleString()}</td>
+                </tr>`;
+            });
+            
+            html += '</table>';
+            html += `<p style="margin-top:10px;">共 ${students.length} 条记录</p>`;
+            view.innerHTML = html;
+        }
+        
+        function clearAllData() {
+            if (!adminLoggedIn) return showMessage('请先登录管理员', 'error');
+            if (confirm('⚠️ 确定要清空所有数据吗？此操作不可恢复！')) {
+                students = [];
+                localStorage.removeItem('students');
+                updateStats();
+                document.getElementById('dataView').innerHTML = '';
+                showMessage('所有数据已清空', 'success');
+            }
+        }
+    </script>
+</body>
+</html>
