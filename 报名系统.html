@@ -469,6 +469,14 @@
                         <input type="text" name="previousSchool" placeholder="例如：XX县第一小学">
                     </div>
                 </div>
+
+                <!-- 新增字段：就读班级（选填） -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>就读班级（选填）</label>
+                        <input type="text" name="gradeClass" placeholder="例如：三（1）班">
+                    </div>
+                </div>
                 
                 <h3 class="section-title">家庭情况</h3>
                 <div class="special-checkboxes">
@@ -825,11 +833,11 @@
                 mimeType = 'application/json';
             } else if (format === 'csv' || format === 'excel') {
                 // 导出为CSV（Excel可以打开）
-                // 更新表头，增加新字段
+                // 更新表头，增加“就读班级”字段
                 const headers = [
                     '序号', '提交时间', '姓名', '性别', '民族', '身份证号码', '学籍号', 
                     '是否建档立卡户', '是否留守儿童', '是否住校', '是否单亲家庭', '是否残疾儿童',
-                    '原就读学校', '户籍地', '现居住地', '监护人姓名', '与监护人关系', 
+                    '原就读学校', '就读班级', '户籍地', '现居住地', '监护人姓名', '与监护人关系', 
                     '监护人身份证号码', '监护人联系电话', '包保教师'
                 ];
                 
@@ -854,6 +862,7 @@
                         student.isSingleParent || '否',
                         student.isDisabledChild || '否',
                         student.previousSchool || '',
+                        student.gradeClass || '',  // 新增字段：就读班级
                         student.registeredAddress,
                         student.currentAddress,
                         student.guardianName,
@@ -910,7 +919,8 @@
             let html = `<h4 style="margin-bottom: 15px;">共 ${students.length} 条记录</h4>`;
             html += '<table class="data-table">';
             html += '<thead><tr>';
-            html += '<th>序号</th><th>姓名</th><th>性别</th><th>身份证</th><th>监护人</th><th>电话</th><th>单亲</th><th>残疾</th><th>提交时间</th>';
+            // 增加“班级”列
+            html += '<th>序号</th><th>姓名</th><th>性别</th><th>班级</th><th>身份证</th><th>监护人</th><th>电话</th><th>单亲</th><th>残疾</th><th>提交时间</th>';
             html += '</tr></thead><tbody>';
             
             // 按提交时间倒序排列（最新的在前面）
@@ -923,6 +933,7 @@
                 html += `<td>${index + 1}</td>`;
                 html += `<td>${student.name}</td>`;
                 html += `<td>${student.gender}</td>`;
+                html += `<td>${student.gradeClass || ''}</td>`;  // 显示班级
                 html += `<td>${student.idCard}</td>`;
                 html += `<td>${student.guardianName}</td>`;
                 html += `<td>${student.guardianPhone}</td>`;
