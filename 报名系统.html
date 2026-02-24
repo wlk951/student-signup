@@ -2,468 +2,1055 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>学生报名系统</title>
+    <title>学生报名信息采集系统</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f7fa; padding: 15px; }
-        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
-        h1 { color: #1e5799; text-align: center; margin-bottom: 20px; font-size: 28px; }
-        .qr-section { text-align: center; background: #f8f9fa; padding: 25px; border-radius: 15px; margin-bottom: 20px; }
-        #qrcode { margin: 20px auto; display: inline-block; padding: 15px; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .stats { background: #e8f4ff; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; font-size: 18px; }
-        .form-section { background: #f9f9f9; padding: 20px; border-radius: 10px; }
-        h2 { color: #2980b9; margin-bottom: 15px; font-size: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: 600; }
-        .required:after { content: " *"; color: #e74c3c; }
-        input, select { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; }
-        input:focus, select:focus { border-color: #1e5799; outline: none; }
-        .checkbox-group { display: flex; flex-wrap: wrap; gap: 15px; margin: 15px 0; }
-        .checkbox-item { display: flex; align-items: center; }
-        .checkbox-item input { width: 20px; height: 20px; margin-right: 8px; }
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; margin: 10px 0; }
-        .btn-primary { background: #1e5799; color: white; }
-        .btn-success { background: #27ae60; color: white; }
-        .btn-warning { background: #f39c12; color: white; }
-        .message { padding: 12px; border-radius: 8px; margin: 10px 0; display: none; }
-        .message.success { background: #d4edda; color: #155724; }
-        .message.error { background: #f8d7da; color: #721c24; }
-        .admin-panel { margin-top: 30px; padding: 20px; background: #f0f0f0; border-radius: 10px; display: none; }
-        .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
-        .print-btn { background: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 10px 5px; }
-        .qr-actions { margin: 15px 0; }
-        .info-box { background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 8px; margin: 15px 0; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e5799 0%, #207cca 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .stats {
+            background: #e8f4ff;
+            padding: 15px;
+            margin: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+            border-left: 5px solid #1e5799;
+        }
+        
+        .stats span {
+            font-weight: bold;
+            color: #1e5799;
+            margin: 0 5px;
+        }
+        
+        .form-section {
+            padding: 20px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            color: #1e5799;
+            margin: 25px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+        
+        .form-group {
+            padding: 0 10px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        @media (min-width: 768px) {
+            .form-group.half {
+                width: 50%;
+            }
+            .form-group.third {
+                width: 33.333%;
+            }
+            .form-group.two-third {
+                width: 66.667%;
+            }
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .required::after {
+            content: " *";
+            color: #e74c3c;
+        }
+        
+        input[type="text"],
+        input[type="tel"],
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="tel"]:focus,
+        select:focus {
+            border-color: #1e5799;
+            outline: none;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 15px 0;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .checkbox-item input {
+            margin-right: 8px;
+            width: 18px;
+            height: 18px;
+        }
+        
+        .id-check {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .id-check input {
+            flex: 1;
+        }
+        
+        .id-check button {
+            width: 100px;
+            background: #5d9cec;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .id-check button:hover {
+            background: #4a89dc;
+        }
+        
+        .check-result {
+            margin-top: 8px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .check-result.success {
+            background: #d4efdf;
+            color: #27ae60;
+            border: 1px solid #a3e4d7;
+        }
+        
+        .check-result.error {
+            background: #fadbd8;
+            color: #e74c3c;
+            border: 1px solid #f1948a;
+        }
+        
+        .form-buttons {
+            text-align: center;
+            margin: 40px 0 20px;
+        }
+        
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .btn-submit {
+            background: #1e5799;
+            color: white;
+        }
+        
+        .btn-submit:hover {
+            background: #15427a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(30, 87, 153, 0.3);
+        }
+        
+        .btn-reset {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .btn-reset:hover {
+            background: #7f8c8d;
+        }
+        
+        .btn-admin {
+            background: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        
+        .btn-admin:hover {
+            background: #219653;
+        }
+        
+        .admin-section {
+            background: #f9f9f9;
+            border-top: 2px dashed #ddd;
+            margin-top: 30px;
+            padding: 20px;
+            display: none;
+        }
+        
+        .admin-section h3 {
+            color: #27ae60;
+            margin-bottom: 20px;
+        }
+        
+        .admin-password {
+            margin: 20px 0;
+        }
+        
+        .admin-password input {
+            padding: 12px;
+            width: 300px;
+            max-width: 100%;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        
+        .admin-password button {
+            padding: 12px 25px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+        
+        .admin-functions {
+            margin-top: 30px;
+        }
+        
+        .admin-functions button {
+            padding: 12px 25px;
+            margin: 0 10px 10px 0;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .admin-functions button:hover {
+            background: #2980b9;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .data-table th,
+        .data-table td {
+            border: 1px solid #e0e0e0;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .data-table th {
+            background: #f2f2f2;
+            font-weight: 600;
+        }
+        
+        .data-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .message {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+            text-align: center;
+            display: none;
+        }
+        
+        .message.success {
+            background: #d4efdf;
+            color: #27ae60;
+            border: 1px solid #a3e4d7;
+        }
+        
+        .message.error {
+            background: #fadbd8;
+            color: #e74c3c;
+            border: 1px solid #f1948a;
+        }
+        
+        .instructions {
+            background: #fff8e1;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+            border-left: 5px solid #ffc107;
+        }
+        
+        .instructions h4 {
+            color: #ff9800;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 14px;
+            border-top: 1px solid #eee;
+        }
+        
+        .form-note {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .new-field {
+            position: relative;
+        }
+        
+        .new-field::before {
+            content: "新增";
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: #ff9800;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .special-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
     </style>
-    <!-- 引入二维码生成库 -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>📝 学生报名信息采集系统</h1>
-        
-        <!-- 统计信息 -->
-        <div class="stats">
-            📊 已报名：<span id="totalCount">0</span> 人 | 
-            今日报名：<span id="todayCount">0</span> 人
+        <div class="header">
+            <h1>学生报名信息采集系统</h1>
+            <p>请如实填写以下信息，确保准确无误</p>
         </div>
         
-        <!-- 提示信息 -->
+        <div class="stats">
+            已提交：<span id="totalCount">0</span> 人 | 
+            今日提交：<span id="todayCount">0</span> 人
+        </div>
+        
         <div id="message" class="message"></div>
         
-        <!-- 二维码区域 - 学生用手机扫码 -->
-        <div class="qr-section">
-            <h2 style="color: #1e5799;">📱 手机扫码报名</h2>
-            <p style="margin-bottom: 15px;">用手机微信/浏览器扫描下方二维码直接填写</p>
-            
-            <div id="qrcode"></div>
-            
-            <div class="qr-actions">
-                <button onclick="downloadQR()" class="print-btn">📥 下载二维码</button>
-                <button onclick="printQR()" class="print-btn">🖨️ 打印二维码</button>
-            </div>
-            
-            <div class="info-box">
-                <strong>📌 使用说明：</strong>
-                <ol style="text-align: left; margin-top: 10px; padding-left: 20px;">
-                    <li><strong>步骤1：</strong>把二维码打印出来，贴在学校公告栏或教室</li>
-                    <li><strong>步骤2：</strong>学生用手机扫描二维码，直接填写报名信息</li>
-                    <li><strong>步骤3：</strong>管理员随时可以导出所有报名数据</li>
-                    <li><strong>注意：</strong>每个学生只能提交一次，系统会自动检查身份证重复</li>
-                </ol>
-            </div>
-            
-            <p style="margin-top: 15px; color: #666;">
-                <small>访问地址：<span id="currentUrl"></span></small>
-            </p>
+        <div class="instructions">
+            <h4>填写说明</h4>
+            <ul>
+                <li>标有 <span class="required"></span> 的字段为必填项</li>
+                <li>学籍号、包保教师和原就读学校为选填项，可不填写</li>
+                <li>身份证号码每人只能提交一次，提交前请先检查是否已提交</li>
+                <li>所有信息将严格保密，仅用于报名登记</li>
+            </ul>
         </div>
         
-        <!-- 管理员登录按钮 -->
-        <button onclick="toggleAdmin()" class="btn btn-warning">👤 管理员入口</button>
-        
-        <!-- 管理员面板 -->
-        <div id="adminPanel" class="admin-panel">
-            <h3 style="margin-bottom: 15px;">管理员登录</h3>
-            <div class="form-group">
-                <input type="password" id="adminPass" placeholder="请输入管理员密码">
-            </div>
-            <button onclick="loginAdmin()" class="btn btn-success" style="padding: 10px;">登录</button>
-            
-            <div id="adminFunctions" style="display: none; margin-top: 20px;">
-                <h4>数据管理</h4>
-                <button onclick="exportData('excel')" class="btn btn-primary" style="margin: 5px 0;">📊 导出Excel文件</button>
-                <button onclick="exportData('json')" class="btn btn-success" style="margin: 5px 0;">📄 导出JSON文件</button>
-                <button onclick="viewData()" class="btn btn-warning" style="margin: 5px 0;">👁️ 查看所有数据</button>
-                <button onclick="clearAllData()" class="btn" style="background: #e74c3c; color: white; margin: 5px 0;">🗑️ 清空所有数据</button>
-                
-                <div id="dataView" style="margin-top: 20px; max-height: 300px; overflow: auto;"></div>
-            </div>
-        </div>
-        
-        <!-- 学生报名表单（也可以直接在这里填） -->
         <div class="form-section">
-            <h2>📋 在线填写报名表</h2>
-            
             <form id="studentForm">
-                <h3>基本信息</h3>
-                
-                <div class="form-group">
-                    <label class="required">姓名</label>
-                    <input type="text" name="name" required>
+                <h3 class="section-title">基本信息</h3>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label class="required">姓名</label>
+                        <input type="text" name="name" required placeholder="请输入学生姓名">
+                    </div>
+                    
+                    <div class="form-group half">
+                        <label class="required">性别</label>
+                        <select name="gender" required>
+                            <option value="">请选择</option>
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label class="required">性别</label>
-                    <select name="gender" required>
-                        <option value="">请选择</option>
-                        <option value="男">男</option>
-                        <option value="女">女</option>
-                    </select>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label class="required">民族</label>
+                        <input type="text" name="ethnicity" required placeholder="如：汉族">
+                    </div>
+                    
+                    <div class="form-group half">
+                        <label class="required">身份证号码</label>
+                        <div class="id-check">
+                            <input type="text" name="idCard" maxlength="18" required placeholder="18位身份证号码">
+                            <button type="button" id="checkIdCard">检查</button>
+                        </div>
+                        <div id="idCardResult" class="check-result"></div>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label class="required">民族</label>
-                    <input type="text" name="ethnicity" required placeholder="如：汉族">
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label>学籍号（选填）</label>
+                        <input type="text" name="studentNumber" placeholder="选填">
+                    </div>
+                    
+                    <div class="form-group half new-field">
+                        <label>原就读学校（选填）</label>
+                        <input type="text" name="previousSchool" placeholder="例如：XX县第一小学">
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label class="required">身份证号码</label>
-                    <input type="text" name="idCard" maxlength="18" required placeholder="18位身份证" id="idCard">
-                    <small style="color: #666;">提交前会自动检查是否重复</small>
-                </div>
-                
-                <div class="form-group">
-                    <label>学籍号（选填）</label>
-                    <input type="text" name="studentNumber">
-                </div>
-                
-                <div class="form-group">
-                    <label>原就读学校（选填）</label>
-                    <input type="text" name="previousSchool">
-                </div>
-                
-                <h3>家庭情况</h3>
-                
-                <div class="checkbox-group">
+                <h3 class="section-title">家庭情况</h3>
+                <div class="special-checkboxes">
                     <div class="checkbox-item">
                         <input type="checkbox" name="isPoorHousehold" id="poor">
-                        <label for="poor">建档立卡户</label>
+                        <label for="poor">是否建档立卡户</label>
                     </div>
                     <div class="checkbox-item">
-                        <input type="checkbox" name="isLeftBehindChild" id="left">
-                        <label for="left">留守儿童</label>
+                        <input type="checkbox" name="isLeftBehindChild" id="leftBehind">
+                        <label for="leftBehind">是否留守儿童</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" name="isBoarder" id="boarder">
-                        <label for="boarder">住校</label>
+                        <label for="boarder">是否住校</label>
                     </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" name="isSingleParent" id="single">
-                        <label for="single">单亲家庭</label>
+                    <div class="checkbox-item new-field">
+                        <input type="checkbox" name="isSingleParent" id="singleParent">
+                        <label for="singleParent">是否单亲家庭</label>
                     </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" name="isDisabledChild" id="disabled">
-                        <label for="disabled">残疾儿童</label>
+                    <div class="checkbox-item new-field">
+                        <input type="checkbox" name="isDisabledChild" id="disabledChild">
+                        <label for="disabledChild">是否残疾儿童</label>
                     </div>
                 </div>
                 
-                <div class="form-group">
-                    <label class="required">户籍地（精确到村）</label>
-                    <input type="text" name="registeredAddress" required placeholder="例如：XX省XX市XX县XX镇XX村">
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label class="required">户籍地（精确到村）</label>
+                        <input type="text" name="registeredAddress" required placeholder="例如：XX省XX市XX县XX镇XX村">
+                    </div>
+                    
+                    <div class="form-group half">
+                        <label class="required">现居住地（精确到组）</label>
+                        <input type="text" name="currentAddress" required placeholder="例如：XX省XX市XX县XX镇XX村XX组">
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label class="required">现居住地（精确到组）</label>
-                    <input type="text" name="currentAddress" required placeholder="例如：XX省XX市XX县XX镇XX村XX组">
+                <h3 class="section-title">监护人信息</h3>
+                <div class="form-row">
+                    <div class="form-group third">
+                        <label class="required">监护人姓名</label>
+                        <input type="text" name="guardianName" required placeholder="请输入监护人姓名">
+                    </div>
+                    
+                    <div class="form-group third">
+                        <label class="required">与监护人关系</label>
+                        <select name="guardianRelation" required>
+                            <option value="">请选择</option>
+                            <option value="父亲">父亲</option>
+                            <option value="母亲">母亲</option>
+                            <option value="祖父">祖父</option>
+                            <option value="祖母">祖母</option>
+                            <option value="外祖父">外祖父</option>
+                            <option value="外祖母">外祖母</option>
+                            <option value="哥哥">哥哥</option>
+                            <option value="姐姐">姐姐</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group third">
+                        <label class="required">监护人身份证号码</label>
+                        <input type="text" name="guardianIdCard" maxlength="18" required placeholder="18位身份证号码">
+                    </div>
                 </div>
                 
-                <h3>监护人信息</h3>
-                
-                <div class="form-group">
-                    <label class="required">监护人姓名</label>
-                    <input type="text" name="guardianName" required>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label class="required">监护人联系电话</label>
+                        <input type="tel" name="guardianPhone" maxlength="11" required placeholder="11位手机号码">
+                        <div class="form-note">请确保电话畅通，以便联系</div>
+                    </div>
+                    
+                    <div class="form-group half">
+                        <label>包保教师（选填）</label>
+                        <input type="text" name="responsibleTeacher" placeholder="选填">
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label class="required">与监护人关系</label>
-                    <select name="guardianRelation" required>
-                        <option value="">请选择</option>
-                        <option value="父亲">父亲</option>
-                        <option value="母亲">母亲</option>
-                        <option value="祖父">祖父</option>
-                        <option value="祖母">祖母</option>
-                        <option value="外祖父">外祖父</option>
-                        <option value="外祖母">外祖母</option>
-                        <option value="其他">其他</option>
-                    </select>
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-submit">提交信息</button>
+                    <button type="button" class="btn btn-reset" id="resetBtn">重新填写</button>
                 </div>
-                
-                <div class="form-group">
-                    <label class="required">监护人身份证</label>
-                    <input type="text" name="guardianIdCard" maxlength="18" required>
-                </div>
-                
-                <div class="form-group">
-                    <label class="required">监护人电话</label>
-                    <input type="tel" name="guardianPhone" maxlength="11" required placeholder="11位手机号">
-                </div>
-                
-                <div class="form-group">
-                    <label>包保教师（选填）</label>
-                    <input type="text" name="responsibleTeacher">
-                </div>
-                
-                <button type="submit" class="btn btn-primary">✅ 提交报名信息</button>
             </form>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button id="adminToggle" class="btn btn-admin">管理员数据导出</button>
+            </div>
+            
+            <div id="adminSection" class="admin-section">
+                <h3>管理员数据导出功能</h3>
+                <p>使用此功能可导出所有已提交的学生信息。</p>
+                
+                <div class="admin-password">
+                    <input type="password" id="adminPassword" placeholder="请输入管理员密码">
+                    <button id="adminLoginBtn">登录</button>
+                </div>
+                
+                <div id="adminFunctions" style="display: none;">
+                    <div class="admin-functions">
+                        <button onclick="exportData('excel')">导出为Excel文件</button>
+                        <button onclick="exportData('csv')">导出为CSV文件</button>
+                        <button onclick="exportData('json')">导出为JSON文件</button>
+                        <button onclick="viewAllData()">查看所有数据</button>
+                        <button onclick="showStatistics()">查看统计报表</button>
+                        <button onclick="clearAllData()" style="background: #e74c3c;">清空所有数据</button>
+                    </div>
+                    
+                    <div id="dataView"></div>
+                    <div id="statisticsView" style="display: none; margin-top: 30px;"></div>
+                </div>
+            </div>
         </div>
         
-        <div class="footer">
-            <p>© 学生报名系统 | 数据保存在浏览器中 | 管理员密码：admin123</p>
-        </div>
+        <footer>
+            <p>© 2023 学生报名信息采集系统</p>
+            <p style="font-size: 12px; margin-top: 5px;">技术支持 | 数据将保存在本地浏览器中</p>
+        </footer>
     </div>
-    
+
     <script>
-        // ========== 数据初始化 ==========
+        // 初始化数据存储
         let students = JSON.parse(localStorage.getItem('students')) || [];
-        let adminLoggedIn = false;
         
-        // 页面加载时运行
-        document.addEventListener('DOMContentLoaded', function() {
-            updateStats();
-            generateQRCode();
-            document.getElementById('currentUrl').textContent = window.location.href;
-            
-            // 显示欢迎信息
-            if (students.length === 0) {
-                showMessage('欢迎使用！请打印二维码让学生扫码报名。', 'success');
-            }
-        });
-        
-        // ========== 更新统计 ==========
+        // 更新统计信息
         function updateStats() {
-            const total = students.length;
-            const today = new Date().toDateString();
-            const todayCount = students.filter(s => new Date(s.submissionTime).toDateString() === today).length;
+            // 更新总提交数
+            document.getElementById('totalCount').textContent = students.length;
             
-            document.getElementById('totalCount').textContent = total;
+            // 计算今日提交数
+            const today = new Date().toDateString();
+            const todayCount = students.filter(student => {
+                const submitDate = new Date(student.submissionTime).toDateString();
+                return submitDate === today;
+            }).length;
+            
             document.getElementById('todayCount').textContent = todayCount;
         }
         
-        // ========== 显示消息 ==========
+        // 显示消息
         function showMessage(text, type) {
-            const msg = document.getElementById('message');
-            msg.textContent = text;
-            msg.className = `message ${type}`;
-            msg.style.display = 'block';
-            setTimeout(() => msg.style.display = 'none', 5000);
-        }
-        
-        // ========== 二维码功能 ==========
-        function generateQRCode() {
-            const url = window.location.href;
-            const qrcodeDiv = document.getElementById('qrcode');
-            qrcodeDiv.innerHTML = '';
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
             
-            QRCode.toCanvas(qrcodeDiv, url, { width: 250 }, function(error) {
-                if (error) console.error('二维码生成失败:', error);
-            });
+            // 3秒后自动隐藏
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
         }
         
-        function downloadQR() {
-            const canvas = document.querySelector('#qrcode canvas');
-            if (!canvas) return alert('请稍等，二维码正在生成...');
-            
-            const link = document.createElement('a');
-            link.download = '学生报名二维码.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-            showMessage('二维码已下载！', 'success');
-        }
-        
-        function printQR() {
-            const canvas = document.querySelector('#qrcode canvas');
-            if (!canvas) return alert('请稍等，二维码正在生成...');
-            
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <html>
-                <head>
-                    <title>学生报名系统二维码</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; text-align: center; padding: 30px; }
-                        h2 { color: #1e5799; }
-                        .qr { margin: 30px auto; }
-                        .info { margin: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px; text-align: left; }
-                    </style>
-                </head>
-                <body>
-                    <h2>学生报名信息采集系统</h2>
-                    <p>请使用手机扫描下方二维码填写报名信息</p>
-                    <div class="qr">${document.getElementById('qrcode').innerHTML}</div>
-                    <div class="info">
-                        <h3>使用说明：</h3>
-                        <ol>
-                            <li>打开手机微信/浏览器</li>
-                            <li>扫描上方二维码</li>
-                            <li>填写报名信息并提交</li>
-                            <li>每个学生只能提交一次</li>
-                        </ol>
-                        <p><strong>访问地址：</strong> ${window.location.href}</p>
-                        <p><strong>生成时间：</strong> ${new Date().toLocaleString()}</p>
-                    </div>
-                </body>
-                </html>
-            `);
-            printWindow.print();
-        }
-        
-        // ========== 身份证验证 ==========
+        // 身份证验证函数
         function validateIdCard(idCard) {
-            if (!/^\d{17}[\dXx]$/.test(idCard)) return false;
-            if (idCard.length === 18) {
-                const weight = [7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2];
-                const check = ['1','0','X','9','8','7','6','5','4','3','2'];
-                let sum = 0;
-                for (let i = 0; i < 17; i++) sum += parseInt(idCard[i]) * weight[i];
-                return idCard[17].toUpperCase() === check[sum % 11];
+            // 基本格式验证
+            if (!/^\d{17}[\dXx]$/.test(idCard)) {
+                return false;
             }
+            
+            // 18位身份证校验码验证
+            if (idCard.length === 18) {
+                const weight = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2];
+                const checkCodes = ['1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2'];
+                
+                let sum = 0;
+                for (let i = 0; i < 17; i++) {
+                    sum += parseInt(idCard.charAt(i)) * weight[i];
+                }
+                
+                const mod = sum % 11;
+                return idCard.charAt(17).toUpperCase() === checkCodes[mod];
+            }
+            
             return true;
         }
         
+        // 手机号验证
         function validatePhone(phone) {
             return /^1[3-9]\d{9}$/.test(phone);
         }
         
-        // ========== 表单提交 ==========
+        // 检查身份证是否已提交
+        document.getElementById('checkIdCard').addEventListener('click', function() {
+            const idCardInput = document.querySelector('input[name="idCard"]');
+            const idCard = idCardInput.value;
+            const resultDiv = document.getElementById('idCardResult');
+            
+            if (!idCard || idCard.length !== 18) {
+                resultDiv.textContent = '请输入18位身份证号码';
+                resultDiv.className = 'check-result error';
+                resultDiv.style.display = 'block';
+                return;
+            }
+            
+            if (!validateIdCard(idCard)) {
+                resultDiv.textContent = '身份证号码格式不正确';
+                resultDiv.className = 'check-result error';
+                resultDiv.style.display = 'block';
+                return;
+            }
+            
+            // 检查是否已提交
+            const existing = students.find(student => student.idCard === idCard);
+            if (existing) {
+                const time = new Date(existing.submissionTime).toLocaleString();
+                resultDiv.innerHTML = `该身份证已提交！<br>提交人：${existing.name}<br>提交时间：${time}`;
+                resultDiv.className = 'check-result error';
+                resultDiv.style.display = 'block';
+            } else {
+                resultDiv.textContent = '✓ 该身份证可以提交';
+                resultDiv.className = 'check-result success';
+                resultDiv.style.display = 'block';
+            }
+        });
+        
+        // 表单提交
         document.getElementById('studentForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const formData = new FormData(this);
             const data = {};
-            const checkboxes = ['isPoorHousehold','isLeftBehindChild','isBoarder','isSingleParent','isDisabledChild'];
+            
+            // 将表单数据转换为对象（处理复选框）
+            const checkboxFields = [
+                'isPoorHousehold', 
+                'isLeftBehindChild', 
+                'isBoarder', 
+                'isSingleParent', 
+                'isDisabledChild'
+            ];
             
             for (let [key, value] of formData.entries()) {
-                if (checkboxes.includes(key)) {
+                if (checkboxFields.includes(key)) {
                     data[key] = value === 'on' ? '是' : '否';
                 } else {
                     data[key] = value;
                 }
             }
             
-            // 验证
-            if (!validateIdCard(data.idCard)) return showMessage('学生身份证格式不正确！', 'error');
-            if (!validateIdCard(data.guardianIdCard)) return showMessage('监护人身份证格式不正确！', 'error');
-            if (!validatePhone(data.guardianPhone)) return showMessage('手机号码格式不正确！', 'error');
-            
-            // 检查重复
-            if (students.find(s => s.idCard === data.idCard)) {
-                return showMessage('该身份证号码已提交过！', 'error');
-            }
-            
-            // 保存
-            data.submissionTime = new Date().toISOString();
-            data.id = Date.now();
-            students.push(data);
-            localStorage.setItem('students', JSON.stringify(students));
-            
-            showMessage('✅ 报名成功！', 'success');
-            updateStats();
-            this.reset();
-        });
-        
-        // ========== 管理员功能 ==========
-        function toggleAdmin() {
-            const panel = document.getElementById('adminPanel');
-            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-        }
-        
-        function loginAdmin() {
-            const pass = document.getElementById('adminPass').value;
-            if (pass === 'admin123') {
-                adminLoggedIn = true;
-                document.getElementById('adminFunctions').style.display = 'block';
-                showMessage('管理员登录成功！', 'success');
-            } else {
-                showMessage('密码错误！', 'error');
-            }
-        }
-        
-        function exportData(format) {
-            if (!adminLoggedIn) return showMessage('请先登录管理员', 'error');
-            if (students.length === 0) return showMessage('暂无数据可导出', 'error');
-            
-            let content, filename;
-            const date = new Date().toLocaleDateString().replace(/\//g, '-');
-            
-            if (format === 'json') {
-                content = JSON.stringify(students, null, 2);
-                filename = `学生报名数据_${date}.json`;
-            } else {
-                const headers = ['姓名','性别','民族','身份证','学籍号','原学校','建档立卡','留守','住校','单亲','残疾','户籍地','现住地','监护人','关系','监护人身份证','电话','包保教师','提交时间'];
-                const rows = [headers];
-                
-                students.forEach(s => {
-                    rows.push([
-                        s.name, s.gender, s.ethnicity, s.idCard, s.studentNumber || '', s.previousSchool || '',
-                        s.isPoorHousehold || '否', s.isLeftBehindChild || '否', s.isBoarder || '否',
-                        s.isSingleParent || '否', s.isDisabledChild || '否',
-                        s.registeredAddress, s.currentAddress, s.guardianName, s.guardianRelation,
-                        s.guardianIdCard, s.guardianPhone, s.responsibleTeacher || '',
-                        new Date(s.submissionTime).toLocaleString()
-                    ]);
-                });
-                
-                content = rows.map(row => row.join(',')).join('\n');
-                filename = `学生报名数据_${date}.csv`;
-            }
-            
-            const blob = new Blob(['\ufeff' + content], { type: 'text/plain;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            a.click();
-            URL.revokeObjectURL(url);
-            
-            showMessage(`✅ 已导出 ${students.length} 条数据`, 'success');
-        }
-        
-        function viewData() {
-            if (!adminLoggedIn) return showMessage('请先登录管理员', 'error');
-            
-            const view = document.getElementById('dataView');
-            if (students.length === 0) {
-                view.innerHTML = '<p style="color:#666; padding:10px;">暂无报名数据</p>';
+            // 验证身份证
+            if (!validateIdCard(data.idCard)) {
+                showMessage('学生身份证号码格式不正确！', 'error');
                 return;
             }
             
-            let html = '<table style="width:100%; border-collapse:collapse;">';
-            html += '<tr style="background:#1e5799; color:white;"><th>姓名</th><th>身份证</th><th>电话</th><th>提交时间</th></tr>';
+            // 验证监护人身份证
+            if (!validateIdCard(data.guardianIdCard)) {
+                showMessage('监护人身份证号码格式不正确！', 'error');
+                return;
+            }
             
-            students.slice().reverse().forEach(s => {
-                html += `<tr style="border-bottom:1px solid #ddd;">
-                    <td style="padding:8px;">${s.name}</td>
-                    <td style="padding:8px;">${s.idCard}</td>
-                    <td style="padding:8px;">${s.guardianPhone}</td>
-                    <td style="padding:8px;">${new Date(s.submissionTime).toLocaleString()}</td>
-                </tr>`;
+            // 验证手机号
+            if (!validatePhone(data.guardianPhone)) {
+                showMessage('监护人联系电话格式不正确！', 'error');
+                return;
+            }
+            
+            // 检查身份证是否重复
+            const existing = students.find(student => student.idCard === data.idCard);
+            if (existing) {
+                showMessage('该身份证号码已提交过信息！', 'error');
+                return;
+            }
+            
+            // 添加提交时间
+            data.submissionTime = new Date().toISOString();
+            data.id = Date.now();
+            
+            // 添加到数据数组
+            students.push(data);
+            
+            // 保存到本地存储
+            localStorage.setItem('students', JSON.stringify(students));
+            
+            // 更新统计
+            updateStats();
+            
+            // 显示成功消息
+            showMessage(`提交成功！提交时间：${new Date().toLocaleString()}`, 'success');
+            
+            // 重置表单
+            this.reset();
+            document.getElementById('idCardResult').style.display = 'none';
+            
+            // 刷新页面（确保数据一致性）
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        });
+        
+        // 重置表单
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            if (confirm('确定要清空所有已填写的内容吗？')) {
+                document.getElementById('studentForm').reset();
+                document.getElementById('idCardResult').style.display = 'none';
+            }
+        });
+        
+        // 管理员面板切换
+        document.getElementById('adminToggle').addEventListener('click', function() {
+            const adminSection = document.getElementById('adminSection');
+            if (adminSection.style.display === 'block') {
+                adminSection.style.display = 'none';
+                document.getElementById('statisticsView').style.display = 'none';
+                document.getElementById('dataView').style.display = 'block';
+            } else {
+                adminSection.style.display = 'block';
+            }
+        });
+        
+        // 管理员登录
+        document.getElementById('adminLoginBtn').addEventListener('click', function() {
+            const password = document.getElementById('adminPassword').value;
+            const adminFunctions = document.getElementById('adminFunctions');
+            
+            // 简单密码验证（可以修改为您自己的密码）
+            // 密码
+            const hashedPassword = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9'; // 
+            
+            // 计算输入
+            async function sha256(message) {
+                const msgBuffer = new TextEncoder().encode(message);                    
+                const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                return hashHex;
+            }
+            
+            // 验证密码
+            sha256(password).then(hash => {
+                if (hash === hashedPassword) {
+                    adminFunctions.style.display = 'block';
+                    showMessage('管理员登录成功！', 'success');
+                    viewAllData(); // 默认显示数据
+                } else {
+                    showMessage('密码错误！', 'error');
+                }
             });
+        });
+        
+        // 导出数据函数
+        async function exportData(format) {
+            if (students.length === 0) {
+                showMessage('没有数据可导出！', 'error');
+                return;
+            }
             
-            html += '</table>';
-            html += `<p style="margin-top:10px;">共 ${students.length} 条记录</p>`;
-            view.innerHTML = html;
+            let dataStr, fileName, mimeType;
+            
+            if (format === 'json') {
+                // 导出为JSON
+                dataStr = JSON.stringify(students, null, 2);
+                fileName = `学生报名数据_${new Date().toLocaleDateString()}.json`;
+                mimeType = 'application/json';
+            } else if (format === 'csv' || format === 'excel') {
+                // 导出为CSV（Excel可以打开）
+                // 更新表头，增加新字段
+                const headers = [
+                    '序号', '提交时间', '姓名', '性别', '民族', '身份证号码', '学籍号', 
+                    '是否建档立卡户', '是否留守儿童', '是否住校', '是否单亲家庭', '是否残疾儿童',
+                    '原就读学校', '户籍地', '现居住地', '监护人姓名', '与监护人关系', 
+                    '监护人身份证号码', '监护人联系电话', '包保教师'
+                ];
+                
+                const csvRows = [];
+                
+                // 添加标题行
+                csvRows.push(headers.join(','));
+                
+                // 添加数据行
+                students.forEach((student, index) => {
+                    const row = [
+                        index + 1,
+                        new Date(student.submissionTime).toLocaleString(),
+                        student.name,
+                        student.gender,
+                        student.ethnicity,
+                        student.idCard,
+                        student.studentNumber || '',
+                        student.isPoorHousehold || '否',
+                        student.isLeftBehindChild || '否',
+                        student.isBoarder || '否',
+                        student.isSingleParent || '否',
+                        student.isDisabledChild || '否',
+                        student.previousSchool || '',
+                        student.registeredAddress,
+                        student.currentAddress,
+                        student.guardianName,
+                        student.guardianRelation,
+                        student.guardianIdCard,
+                        student.guardianPhone,
+                        student.responsibleTeacher || ''
+                    ];
+                    
+                    // 处理特殊字符（如逗号）
+                    const escapedRow = row.map(cell => {
+                        if (typeof cell === 'string' && (cell.includes(',') || cell.includes('"'))) {
+                            return `"${cell.replace(/"/g, '""')}"`;
+                        }
+                        return cell;
+                    });
+                    
+                    csvRows.push(escapedRow.join(','));
+                });
+                
+                dataStr = csvRows.join('\n');
+                fileName = `学生报名数据_${new Date().toLocaleDateString()}.csv`;
+                mimeType = 'text/csv;charset=utf-8;';
+            }
+            
+            // 创建下载链接
+            const blob = new Blob(['\ufeff' + dataStr], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showMessage(`数据已导出为${format === 'json' ? 'JSON' : 'Excel'}文件！`, 'success');
         }
         
+        // 查看所有数据
+        function viewAllData() {
+            const dataView = document.getElementById('dataView');
+            const statisticsView = document.getElementById('statisticsView');
+            
+            statisticsView.style.display = 'none';
+            dataView.style.display = 'block';
+            
+            if (students.length === 0) {
+                dataView.innerHTML = '<p style="padding: 20px; background: #f9f9f9; border-radius: 5px;">暂无数据</p>';
+                return;
+            }
+            
+            let html = `<h4 style="margin-bottom: 15px;">共 ${students.length} 条记录</h4>`;
+            html += '<table class="data-table">';
+            html += '<thead><tr>';
+            html += '<th>序号</th><th>姓名</th><th>性别</th><th>身份证</th><th>监护人</th><th>电话</th><th>单亲</th><th>残疾</th><th>提交时间</th>';
+            html += '</tr></thead><tbody>';
+            
+            // 按提交时间倒序排列（最新的在前面）
+            const sortedStudents = [...students].sort((a, b) => 
+                new Date(b.submissionTime) - new Date(a.submissionTime)
+            );
+            
+            sortedStudents.forEach((student, index) => {
+                html += `<tr>`;
+                html += `<td>${index + 1}</td>`;
+                html += `<td>${student.name}</td>`;
+                html += `<td>${student.gender}</td>`;
+                html += `<td>${student.idCard}</td>`;
+                html += `<td>${student.guardianName}</td>`;
+                html += `<td>${student.guardianPhone}</td>`;
+                html += `<td>${student.isSingleParent || '否'}</td>`;
+                html += `<td>${student.isDisabledChild || '否'}</td>`;
+                html += `<td>${new Date(student.submissionTime).toLocaleString()}</td>`;
+                html += `</tr>`;
+            });
+            
+            html += '</tbody></table>';
+            
+            dataView.innerHTML = html;
+        }
+        
+        // 查看统计报表
+        function showStatistics() {
+            const dataView = document.getElementById('dataView');
+            const statisticsView = document.getElementById('statisticsView');
+            
+            dataView.style.display = 'none';
+            statisticsView.style.display = 'block';
+            
+            if (students.length === 0) {
+                statisticsView.innerHTML = '<p style="padding: 20px; background: #f9f9f9; border-radius: 5px;">暂无数据</p>';
+                return;
+            }
+            
+            // 计算各种统计数据
+            const total = students.length;
+            const maleCount = students.filter(s => s.gender === '男').length;
+            const femaleCount = students.filter(s => s.gender === '女').length;
+            const poorCount = students.filter(s => s.isPoorHousehold === '是').length;
+            const leftBehindCount = students.filter(s => s.isLeftBehindChild === '是').length;
+            const boarderCount = students.filter(s => s.isBoarder === '是').length;
+            const singleParentCount = students.filter(s => s.isSingleParent === '是').length;
+            const disabledCount = students.filter(s => s.isDisabledChild === '是').length;
+            
+            let html = '<h4 style="margin-bottom: 20px;">数据统计报表</h4>';
+            
+            // 总体统计
+            html += '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px;">';
+            
+            html += `
+                <div style="background: #e8f4ff; padding: 20px; border-radius: 8px;">
+                    <h5>总体统计</h5>
+                    <p>总人数: <strong>${total}</strong></p>
+                    <p>男生: <strong>${maleCount}</strong> (${total > 0 ? ((maleCount/total*100).toFixed(1)) : 0}%)</p>
+                    <p>女生: <strong>${femaleCount}</strong> (${total > 0 ? ((femaleCount/total*100).toFixed(1)) : 0}%)</p>
+                </div>
+            `;
+            
+            html += `
+                <div style="background: #fff8e1; padding: 20px; border-radius: 8px;">
+                    <h5>家庭情况统计</h5>
+                    <p>建档立卡户: <strong>${poorCount}</strong></p>
+                    <p>留守儿童: <strong>${leftBehindCount}</strong></p>
+                    <p>单亲家庭: <strong>${singleParentCount}</strong></p>
+                </div>
+            `;
+            
+            html += `
+                <div style="background: #f0f9f0; padding: 20px; border-radius: 8px;">
+                    <h5>其他情况统计</h5>
+                    <p>住校生: <strong>${boarderCount}</strong></p>
+                    <p>残疾儿童: <strong>${disabledCount}</strong></p>
+                </div>
+            `;
+            
+            html += '</div>';
+            
+            // 详细统计表格
+            html += '<h5 style="margin-bottom: 15px;">详细统计</h5>';
+            html += '<table class="data-table">';
+            html += '<thead><tr>';
+            html += '<th>统计项目</th><th>人数</th><th>比例</th></tr></thead><tbody>';
+            
+            // 各行统计数据
+            const statsItems = [
+                { label: '总人数', count: total, color: '#1e5799' },
+                { label: '男生', count: maleCount, color: '#3498db' },
+                { label: '女生', count: femaleCount, color: '#e84393' },
+                { label: '建档立卡户', count: poorCount, color: '#e74c3c' },
+                { label: '留守儿童', count: leftBehindCount, color: '#f39c12' },
+                { label: '住校生', count: boarderCount, color: '#27ae60' },
+                { label: '单亲家庭', count: singleParentCount, color: '#8e44ad' },
+                { label: '残疾儿童', count: disabledCount, color: '#16a085' }
+            ];
+            
+            statsItems.forEach(item => {
+                const percentage = total > 0 ? ((item.count/total*100).toFixed(1)) : 0;
+                html += `<tr>`;
+                html += `<td><span style="display: inline-block; width: 12px; height: 12px; background: ${item.color}; margin-right: 8px; border-radius: 2px;"></span>${item.label}</td>`;
+                html += `<td>${item.count}</td>`;
+                html += `<td>${percentage}%</td>`;
+                html += `</tr>`;
+            });
+            
+            html += '</tbody></table>';
+            
+            statisticsView.innerHTML = html;
+        }
+        
+        // 清空所有数据（谨慎使用！）
         function clearAllData() {
-            if (!adminLoggedIn) return showMessage('请先登录管理员', 'error');
-            if (confirm('⚠️ 确定要清空所有数据吗？此操作不可恢复！')) {
-                students = [];
-                localStorage.removeItem('students');
-                updateStats();
-                document.getElementById('dataView').innerHTML = '';
-                showMessage('所有数据已清空', 'success');
+            if (confirm('警告：这将删除所有报名数据！确定要继续吗？')) {
+                if (confirm('再次确认：真的要删除所有数据吗？此操作不可恢复！')) {
+                    localStorage.removeItem('students');
+                    students = [];
+                    updateStats();
+                    document.getElementById('dataView').innerHTML = '<p style="color: green; padding: 10px;">所有数据已清空！</p>';
+                    document.getElementById('statisticsView').innerHTML = '';
+                    showMessage('所有数据已清空！', 'success');
+                }
             }
         }
+        
+        // 页面加载时更新统计
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            
+            // 自动保存密码提示（首次使用时）
+            if (!localStorage.getItem('passwordHintShown')) {
+                setTimeout(() => {
+                    alert('提示：准备户口簿准备填报');
+                    localStorage.setItem('passwordHintShown', 'true');
+                }, 1000);
+            }
+        });
     </script>
 </body>
 </html>
